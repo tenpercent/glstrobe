@@ -1,0 +1,81 @@
+//apply plugin: 'com.android.application'
+apply plugin: 'com.android.model.application'
+
+// added "model {}"
+model {
+    android {
+//        compileSdkVersion 20
+        compileSdkVersion = 20
+//        buildToolsVersion "23.0.1"
+        buildToolsVersion = "23.0.1"
+
+//        defaultConfig {
+        defaultConfig.with {
+//            applicationId "com.tenpercent.glstrobe"
+            applicationId = "com.tenpercent.glstrobe"
+//            minSdkVersion 19
+            minSdkVersion.apiLevel = 19
+//            targetSdkVersion 20
+            targetSdkVersion.apiLevel = 20
+//            versionCode 1
+            versionCode = 1
+//            versionName "1.0"
+            versionName = "1.0"
+        }
+// move this outside android {}
+//        buildTypes {
+//            release {
+//                minifyEnabled false
+//                proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+//            }
+//        }
+    }
+
+    compileOptions.with {
+        sourceCompatibility=JavaVersion.VERSION_1_7
+        targetCompatibility=JavaVersion.VERSION_1_7
+    }
+
+    android.buildTypes {
+        release {
+            minifyEnabled = false
+            // not compatible with new gradle plugin
+//            proguardFiles += getDefaultProguardFile('proguard-android.txt')
+            proguardFiles += file ('proguard-rules.pro')
+        }
+    }
+    // wtf is this
+    android.productFlavors {
+        create("arm") {
+            ndk.with {
+                // You can customize the NDK configurations for each
+                // productFlavors and buildTypes.
+                abiFilters += "armeabi-v7a"
+            }
+        }
+    }
+    // ndk support
+    android.ndk {
+        //moduleName = "native-playground"
+        moduleName = "native-gl-strobe"
+        ldLibs += ["android", "EGL", "GLESv2"]
+        cppFlags += ["-std=c++11"]
+    }
+    // wtf how to set custom path
+//    android.sources {
+//        main {
+//            jni {
+//                source {
+//                    srcDirs += "src"
+//                }
+//            }
+//        }
+//    }
+}
+
+dependencies {
+    compile fileTree(dir: 'libs', include: ['*.jar'])
+    // not compatible with new gradle plugin
+//    testCompile 'junit:junit:4.12'
+    compile 'com.android.support:appcompat-v7:20.0.0'
+}
